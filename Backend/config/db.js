@@ -1,17 +1,15 @@
-require("dotenv").config();
+// config/db.js
+const mongoose = require("mongoose");
 
-const http = require("http");
-const { neon } = require("@neondatabase/serverless");
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
 
-const sql = neon(process.env.DATABASE_URL);
-
-const requestHandler = async (req, res) => {
-  const result = await sql`SELECT version()`;
-  const { version } = result[0];
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end(version);
+    console.log("✅ MongoDB Connected...");
+  } catch (error) {
+    console.error("❌ DB Connection Failed:", error.message);
+    process.exit(1);
+  }
 };
 
-http.createServer(requestHandler).listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
-});
+module.exports = connectDB;
