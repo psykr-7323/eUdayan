@@ -42,12 +42,11 @@ import com.example.eudayan.booking.BookingScreen
 import com.example.eudayan.booking.Doctor
 import com.example.eudayan.booking.DoctorDetailScreen
 import com.example.eudayan.chat.ChatScreen
+import com.example.eudayan.community.CommunityViewModel
 import com.example.eudayan.community.AddPostScreen
 import com.example.eudayan.community.CommunityScreen
-import com.example.eudayan.community.Post
 import com.example.eudayan.community.PostDetailScreen
 import com.example.eudayan.community.RepliesScreen
-import com.example.eudayan.community.Comment
 import com.example.eudayan.home.HomeScreen
 import com.example.eudayan.mood.MoodLogScreen
 import kotlinx.coroutines.launch
@@ -88,55 +87,6 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
     val currentDestination = navBackStackEntry?.destination
     val showBottomBar = currentDestination?.route in screens.map { it.route } || currentDestination?.route == BottomBarScreen.MoodLog.route
     val showTopBar = currentDestination?.route != BottomBarScreen.Chat.route
-
-    val posts = remember {
-        mutableStateListOf(
-            Post(
-                author = "Anonymous",
-                time = "2h",
-                views = 15,
-                content = "I'm feeling so overwhelmed with my studies lately. It feels like no matter how much I study, it's never enough. How do you guys deal with academic pressure?",
-                likes = 5,
-                comments = mutableStateListOf(
-                    Comment("Anonymous", "I feel you! It's tough, but I try to break things down into smaller tasks.", 2),
-                    Comment("Mod", "It sounds like you're going through a lot. Remember to take breaks and be kind to yourself. We have some resources on managing stress in the app.", 0, isMod = true),
-                )
-            ),
-            Post(
-                author = "Anonymous",
-                time = "5h",
-                views = 25,
-                content = "My girlfriend and I broke up last week, and I can't stop thinking about her. It hurts so much. Any advice on how to move on?",
-                likes = 10,
-                comments = mutableStateListOf(
-                    Comment("Anonymous", "Time heals all wounds. Focus on yourself for a bit.", 3),
-                    Comment("Mod", "Breakups are tough. It's okay to feel sad. Talking to a friend or a professional can really help.", 0, isMod = true)
-                )
-            ),
-            Post(
-                author = "Anonymous",
-                time = "1d",
-                views = 50,
-                content = "I'm having trouble making friends at my new school. Everyone seems to have their own groups already. What should I do?",
-                likes = 12,
-                comments = mutableStateListOf(
-                    Comment("Anonymous", "Join a club or a sports team! It's a great way to meet people.", 5),
-                    Comment("Mod", "Making new friends can be intimidating. Remember that you are not alone in this. We have a great article on social skills in our resource center.", 0, isMod = true)
-                )
-            ),
-            Post(
-                author = "Anonymous",
-                time = "2d",
-                views = 30,
-                content = "I'm constantly comparing myself to others on social media. It's making me feel so insecure. How do I stop?",
-                likes = 8,
-                comments = mutableStateListOf(
-                    Comment("Anonymous", "I deleted most of my social media apps. It helped a lot.", 4),
-                    Comment("Mod", "Social media can be a highlight reel of people's lives. It's important to remember that it's not always reality. Our article on digital wellness might be helpful.", 0, isMod = true)
-                )
-            )
-        )
-    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -218,11 +168,18 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(BottomBarScreen.Home.route) { HomeScreen(showSignupSuccess = showSignupSuccess) }
-                composable(BottomBarScreen.Community.route) { CommunityScreen(navController, posts) }
+                composable(BottomBarScreen.Community.route) {
+                    // You would typically inject this with Hilt or another DI framework
+                    val communityViewModel = remember { CommunityViewModel() }
+                    CommunityScreen(navController, communityViewModel)
+                }
                 composable(BottomBarScreen.Booking.route) { BookingScreen(navController, doctors) }
-                composable("${BottomBarScreen.PostDetail.route}/{postIndex}") { backStackEntry ->
-                    val postIndex = backStackEntry.arguments?.getString("postIndex")?.toInt() ?: 0
-                    PostDetailScreen(navController, posts, postIndex)
+                composable("${BottomBarScreen.PostDetail.route}/{postId}") { backStackEntry ->
+                    val postId = backStackEntry.arguments?.getString("postId")
+                    if (postId != null) {
+                        // PostDetailScreen will need to be refactored to take a postId
+                        // and use a ViewModel to fetch the specific post's details.
+                    }
                 }
                 composable("${BottomBarScreen.Replies.route}/{commentLikes}") { backStackEntry ->
                     val commentLikes = backStackEntry.arguments?.getString("commentLikes")?.toInt() ?: 0
@@ -230,7 +187,7 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
                 }
                 composable(BottomBarScreen.AddPost.route) {
                     AddPostScreen(navController) { text ->
-                        posts.add(0, Post("Me", "now", 0, text, null, 0, mutableStateListOf()))
+                        // This should now call a ViewModel function to create a post via the API.
                     }
                 }
                 composable(

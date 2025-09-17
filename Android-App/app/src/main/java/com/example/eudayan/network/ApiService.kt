@@ -1,15 +1,13 @@
 package com.example.eudayan.network
 
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.POST
+import com.example.eudayan.community.Discussion
+import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface ApiService {
+    @GET("api/discussions")
+    suspend fun getDiscussions(): List<Discussion>
 
-    @POST("/api/auth/signup")
-    suspend fun signup(@Body signupRequest: SignupRequest): Response<AuthResponse>
-
-    @POST("/api/auth/login")
-    suspend fun login(@Body loginRequest: LoginRequest): Response<AuthResponse>
+    @GET("api/discussions/{id}")
+    suspend fun getDiscussionById(@Path("id") id: String): Discussion
 }
-

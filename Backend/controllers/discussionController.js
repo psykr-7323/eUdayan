@@ -34,6 +34,25 @@ const getDiscussions = async (req, res) => {
   }
 };
 
+// Get single discussion
+const getDiscussionById = async (req, res) => {
+  try {
+    const discussion = await Discussion.findById(req.params.id)
+      .populate("user", "name schoolInfo") // show name and school
+      .populate("comments.user", "name schoolInfo")
+      .populate("comments.replies.user", "name schoolInfo");
+
+    if (!discussion) {
+      return errorResponse(res, "Discussion not found", 404);
+    }
+
+    return successResponse(res, "Discussion fetched", discussion);
+  } catch (error) {
+    console.error(error);
+    return errorResponse(res, "Failed to fetch discussion");
+  }
+};
+
 // Like / Unlike discussion
 const toggleLike = async (req, res) => {
   try {
@@ -217,6 +236,7 @@ const deleteReply = async (req, res) => {
 module.exports = {
   createDiscussion,
   getDiscussions,
+  getDiscussionById,
   toggleLike,
   updateDiscussion,
   addComment,

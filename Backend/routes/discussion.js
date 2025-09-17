@@ -1,7 +1,9 @@
 const express = require("express");
+const router = express.Router();
 const {
   createDiscussion,
   getDiscussions,
+  getDiscussionById,
   toggleLike,
   updateDiscussion,
   addComment,
@@ -14,23 +16,35 @@ const {
 } = require("../controllers/discussionController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
-const router = express.Router();
+// @route   GET & POST /api/discussions
+router.route("/").get(getDiscussions).post(protect, createDiscussion);
 
-// Student
-router.post("/", protect, createDiscussion);
-router.get("/", protect, getDiscussions);
-router.post("/:id/like", protect, toggleLike);
-router.put("/:id", protect, updateDiscussion);
+// @route   GET, PUT & DELETE /api/discussions/:id
+router
+  .route("/:id")
+  .get(getDiscussionById)
+  .put(protect, updateDiscussion)
+  .delete(protect, adminOnly, deleteDiscussion);
 
-router.post("/:id/comment", protect, addComment);
-router.put("/:id/comment/:commentId", protect, updateComment);
+// @route   POST /api/discussions/:id/like
+router.route("/:id/like").post(protect, toggleLike);
 
-router.post("/:id/comment/:commentId/reply", protect, addReply);
-router.put("/:id/comment/:commentId/reply/:replyId", protect, updateReply);
+// @route   POST /api/discussions/:id/comments
+router.route("/:id/comments").post(protect, addComment);
 
-// Admin
-router.delete("/:id", protect, adminOnly, deleteDiscussion);
-router.delete("/:id/comment/:commentId", protect, adminOnly, deleteComment);
-router.delete("/:id/comment/:commentId/reply/:replyId", protect, adminOnly, deleteReply);
+// @route   PUT & DELETE /api/discussions/:id/comments/:commentId
+router
+  .route("/:id/comments/:commentId")
+  .put(protect, updateComment)
+  .delete(protect, adminOnly, deleteComment);
+
+// @route   POST /api/discussions/:id/comments/:commentId/replies
+router.route("/:id/comments/:commentId/replies").post(protect, addReply);
+
+// @route   PUT & DELETE /api/discussions/:id/comments/:commentId/replies/:replyId
+router
+  .route("/:id/comments/:commentId/replies/:replyId")
+  .put(protect, updateReply)
+  .delete(protect, adminOnly, deleteReply);
 
 module.exports = router;
