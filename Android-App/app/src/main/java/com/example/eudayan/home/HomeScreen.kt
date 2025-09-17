@@ -51,7 +51,6 @@ fun HomeScreen(showSignupSuccess: Boolean) {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MoodEntrySection() {
     val moods = listOf(
@@ -68,30 +67,36 @@ fun MoodEntrySection() {
     Column {
         Text("How are you feeling today?", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalArrangement = Arrangement.Center
-        ) {
-            moods.forEach { mood ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(50))
-                        .clickable { selectedMood = mood }
-                        .background(
-                            if (mood == selectedMood) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                            else Color.Transparent
-                        )
-                        .padding(vertical = 12.dp, horizontal = 20.dp)
+
+        val moodRows = moods.chunked(3)
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            moodRows.forEach { rowMoods ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Text(mood.emoji, fontSize = 24.sp)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(mood.name, fontSize = 12.sp)
+                    rowMoods.forEach { mood ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .clip(RoundedCornerShape(50))
+                                .clickable { selectedMood = mood }
+                                .background(
+                                    if (mood == selectedMood) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                    else Color.Transparent
+                                )
+                                .padding(vertical = 12.dp, horizontal = 20.dp)
+                        ) {
+                            Text(mood.emoji, fontSize = 24.sp)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(mood.name, fontSize = 12.sp)
+                        }
+                    }
                 }
             }
         }
+
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             value = journalEntry,
@@ -156,7 +161,7 @@ fun MindfulnessQuote() {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Text(
-            text = "\"The little things? The little moments? They aren\'t little.\"\n- Jon Kabat-Zinn",
+            text = "\"The little things? The little moments? They aren't little.\"\n- Jon Kabat-Zinn",
             modifier = Modifier.padding(16.dp),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge

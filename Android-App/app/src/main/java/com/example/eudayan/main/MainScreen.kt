@@ -3,6 +3,7 @@ package com.example.eudayan.main
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
@@ -137,6 +138,7 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
             )
         )
     }
+    var isNotificationsEnabled by remember { mutableStateOf(false) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -151,7 +153,9 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
                             drawerState.close()
                             navController.navigate(BottomBarScreen.MoodLog.route)
                         }
-                    }
+                    },
+                    isNotificationsEnabled = isNotificationsEnabled,
+                    onNotificationsToggled = { isNotificationsEnabled = it }
                 )
             }
         }
@@ -159,6 +163,7 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
         Scaffold(
             topBar = {
                 if (showTopBar) {
+                    val isTopLevelDestination = currentDestination?.route in screens.map { it.route }
                     TopAppBar(
                         title = { Text("Eudayan") },
                         colors = TopAppBarDefaults.topAppBarColors(
@@ -166,8 +171,14 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
                             titleContentColor = MaterialTheme.colorScheme.onPrimary
                         ),
                         navigationIcon = {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(Icons.Default.Menu, contentDescription = "Menu", tint = MaterialTheme.colorScheme.onPrimary)
+                            if (isTopLevelDestination) {
+                                IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                    Icon(Icons.Default.Menu, contentDescription = "Menu", tint = MaterialTheme.colorScheme.onPrimary)
+                                }
+                            } else {
+                                IconButton(onClick = { navController.popBackStack() }) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onPrimary)
+                                }
                             }
                         }
                     )

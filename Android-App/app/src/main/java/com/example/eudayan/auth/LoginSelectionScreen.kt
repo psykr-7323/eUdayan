@@ -32,7 +32,7 @@ fun LoginSelectionScreen(navController: NavController, onSkip: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { navController.navigate("login_as") },
+            onClick = { navController.navigate("login/user") },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login")

@@ -82,6 +82,10 @@ dependencies {
     // Networking
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+
+    // Media
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
     
     // DataStore
     implementation(libs.androidx.datastore.preferences)

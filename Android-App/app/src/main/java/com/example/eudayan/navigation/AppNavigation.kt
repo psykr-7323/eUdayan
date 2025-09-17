@@ -8,23 +8,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.eudayan.auth.AuthViewModel
-import com.example.eudayan.auth.LoginAsScreen
 import com.example.eudayan.auth.LoginScreen
 import com.example.eudayan.auth.LoginSelectionScreen
 import com.example.eudayan.auth.SignupScreen
-import com.example.eudayan.home.AdminHomeScreen
 import com.example.eudayan.main.MainScreen
-import com.example.eudayan.splash.SplashScreen
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = "splash") {
-        composable("splash") {
-            SplashScreen(navController = navController)
-        }
+    NavHost(navController = navController, startDestination = "login_selection") {
         composable("login_selection") {
             LoginSelectionScreen(navController = navController, onSkip = {
                 navController.navigate("main") {
@@ -34,9 +28,6 @@ fun AppNavigation() {
         }
         composable("signup") {
             SignupScreen(navController = navController, viewModel = authViewModel)
-        }
-        composable("login_as") {
-            LoginAsScreen(navController = navController)
         }
         composable(
             "login/{role}",
@@ -53,9 +44,6 @@ fun AppNavigation() {
                     }
                 }
             )
-        }
-        composable("admin_home") {
-            AdminHomeScreen()
         }
         composable("main") {
             MainScreen(onSignOut = {
