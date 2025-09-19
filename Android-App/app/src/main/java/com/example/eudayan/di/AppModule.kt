@@ -1,5 +1,6 @@
 package com.example.eudayan.di
 
+import com.example.eudayan.data.AuthRepository
 import com.example.eudayan.network.ApiService
 import dagger.Module
 import dagger.Provides
@@ -27,5 +28,9 @@ object AppModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService =
         retrofit.create(ApiService::class.java)
-}
 
+    @Provides
+    @Singleton
+    fun provideAuthRepository(apiService: ApiService): AuthRepository =
+        AuthRepository(apiService)
+}

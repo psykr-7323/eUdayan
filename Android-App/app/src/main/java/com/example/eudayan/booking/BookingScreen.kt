@@ -2,16 +2,7 @@ package com.example.eudayan.booking
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.* // Whole package imported
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -26,11 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale // Added import for ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.eudayan.R
+// import com.example.eudayan.R // R is not directly used here, but often needed
 import kotlin.math.roundToInt
 
 data class Doctor(val id: Int, val name: String, val rating: Double, val image: Int, val description: String)
@@ -40,7 +32,8 @@ fun BookingScreen(navController: NavController, doctors: List<Doctor>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        contentPadding = PaddingValues(bottom = 76.dp) 
     ) {
         item {
             Text("Srinagar, J&K, India", style = MaterialTheme.typography.bodyMedium)
@@ -70,8 +63,9 @@ fun DoctorCard(doctor: Doctor, onClick: () -> Unit) {
             Image(
                 painter = painterResource(id = doctor.image),
                 contentDescription = doctor.name,
+                contentScale = ContentScale.Crop, // Added ContentScale.Crop
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(50.dp)
                     .clip(CircleShape)
             )
             Spacer(modifier = Modifier.size(16.dp))

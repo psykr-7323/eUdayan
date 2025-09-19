@@ -1,12 +1,13 @@
 package com.example.eudayan.community
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.ThumbDown
@@ -27,6 +28,7 @@ import com.example.eudayan.R
 
 data class Reply(
     val author: String,
+    @DrawableRes val authorImage: Int, // Added authorImage
     val time: String,
     val content: String,
     val likes: Int,
@@ -39,9 +41,9 @@ data class Reply(
 fun RepliesScreen(navController: NavController, commentLikes: Int) {
     val replies = remember {
         mutableStateListOf(
-            Reply("veronica3986", "6 days ago", "@rulingrohan....ive never heard that marley quote b4 but it sums it up for me too", 14),
-            Reply("tracym8952", "6 days ago", "Ask the rich man, he'll confess Money can't buy happiness Ask the poor man, he don't doubt But he'd rather be miserable w... Read more", 29),
-            Reply("ajr993", "6 days ago", "It's a stupid quote. Nobody rich is tying their happiness to the absolute number of their wealth. They're tying it to the freedom and comfort that wealth repre... Read more", 44)
+            Reply("veronica3986", R.drawable.user_image, "6 days ago", "@rulingrohan....ive never heard that marley quote b4 but it sums it up for me too", 14),
+            Reply("tracym8952", R.drawable.user_image, "6 days ago", "Ask the rich man, he'll confess Money can't buy happiness Ask the poor man, he don't doubt But he'd rather be miserable w... Read more", 29),
+            Reply("ajr993", R.drawable.user_image, "6 days ago", "It's a stupid quote. Nobody rich is tying their happiness to the absolute number of their wealth. They're tying it to the freedom and comfort that wealth repre... Read more", 44)
         )
     }
     var replyText by remember { mutableStateOf("") }
@@ -53,11 +55,11 @@ fun RepliesScreen(navController: NavController, commentLikes: Int) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                // Original comment
+                
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
-                            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                            painter = painterResource(id = R.drawable.user_image), // Changed to user_image
                             contentDescription = "Author",
                             modifier = Modifier.size(40.dp).clip(CircleShape),
                             contentScale = ContentScale.Crop
@@ -99,7 +101,7 @@ fun RepliesScreen(navController: NavController, commentLikes: Int) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = R.drawable.user_image), // Changed to user_image
                 contentDescription = "User Avatar",
                 modifier = Modifier.size(40.dp).clip(CircleShape)
             )
@@ -113,12 +115,12 @@ fun RepliesScreen(navController: NavController, commentLikes: Int) {
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(onClick = {
                 if (replyText.isNotBlank()) {
-                    replies.add(0, Reply("Me", "now", replyText, 0))
+                    replies.add(0, Reply("Me", R.drawable.user_image, "now", replyText, 0)) // Added R.drawable.user_image
                     replyText = ""
                 }
             }) {
                 Icon(
-                    imageVector = Icons.Default.Send,
+                    imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Send reply"
                 )
             }
@@ -130,7 +132,7 @@ fun RepliesScreen(navController: NavController, commentLikes: Int) {
 fun ReplyItem(reply: Reply, onLikeClicked: (Boolean, Boolean) -> Unit) {
     Row(verticalAlignment = Alignment.Top) {
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            painter = painterResource(id = reply.authorImage), // Changed to reply.authorImage
             contentDescription = "Author",
             modifier = Modifier.size(40.dp).clip(CircleShape),
             contentScale = ContentScale.Crop
