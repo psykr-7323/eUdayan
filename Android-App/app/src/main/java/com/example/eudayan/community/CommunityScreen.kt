@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.ThumbUp // Changed from Outlined f
 import androidx.compose.material.icons.outlined.ThumbUp // Keep for community screen
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.eudayan.R
 import com.example.eudayan.main.BottomBarScreen
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @Composable
 fun CommunityScreen(navController: NavController, posts: List<Post>) {
@@ -42,6 +46,7 @@ fun CommunityScreen(navController: NavController, posts: List<Post>) {
                 postIndex = index,
                 isLiked = post.isLiked 
             )
+
         }
     }
 }
@@ -149,3 +154,4 @@ fun PostItem(
         }
     }
 }
+

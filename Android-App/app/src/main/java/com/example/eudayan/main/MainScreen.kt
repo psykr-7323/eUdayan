@@ -68,9 +68,9 @@ import com.example.eudayan.booking.BookingScreen
 import com.example.eudayan.booking.Doctor
 import com.example.eudayan.booking.DoctorDetailScreen
 import com.example.eudayan.chat.ChatScreen
+import com.example.eudayan.community.CommunityViewModel
 import com.example.eudayan.community.AddPostScreen
 import com.example.eudayan.community.CommunityScreen
-import com.example.eudayan.community.Post
 import com.example.eudayan.community.PostDetailScreen
 import com.example.eudayan.community.RepliesScreen // Assuming this is still used somewhere
 import com.example.eudayan.community.Comment
@@ -176,7 +176,6 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
     val currentDestination = navBackStackEntry?.destination
     val showNavigationPill = currentDestination?.route in screens.map { it.route }
     val showTopBar = currentDestination?.route != BottomBarScreen.Chat.route && currentDestination?.route != BottomBarScreen.Settings.route
-
     val posts: SnapshotStateList<Post> = remember {
         mutableStateListOf(
             Post(
@@ -297,6 +296,7 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
             )
         )
     }
+
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -443,6 +443,7 @@ fun MainScreen(onSignOut: () -> Unit, showSignupSuccess: Boolean = false) {
                         if (doctor != null) {
                             DoctorDetailScreen(doctor = doctor)
                         }
+
                     }
                     composable(BottomBarScreen.MoodLog.route) { MoodLogScreen() }
                     composable(BottomBarScreen.Chat.route) { ChatScreen(navController = navController) }
