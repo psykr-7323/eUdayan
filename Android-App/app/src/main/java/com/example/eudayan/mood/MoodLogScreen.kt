@@ -28,12 +28,19 @@ import java.time.format.DateTimeFormatter
 fun MoodLogScreen() {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
     val moodEntries = remember {
-        // Sample data
+        
         listOf(
             MoodEntry(LocalDate.now().withDayOfMonth(12), Mood("Happy", "😀"), "Had a great day at college!"),
             MoodEntry(LocalDate.now().withDayOfMonth(13), Mood("Happy", "😀"), ""),
             MoodEntry(LocalDate.now().withDayOfMonth(15), Mood("Sad", "😞"), "Feeling a bit down today."),
-            MoodEntry(LocalDate.now().withDayOfMonth(17), Mood("Happy", "😀"), "Passed my exam!")
+            MoodEntry(LocalDate.now().withDayOfMonth(17), Mood("Happy", "😀"), "Passed my exam!"),
+            // Added new entries
+            MoodEntry(LocalDate.now().withDayOfMonth(5), Mood("Calm", "😌"), "Peaceful morning meditation."),
+            MoodEntry(LocalDate.now().withDayOfMonth(8), Mood("Anxious", "😟"), "Worried about upcoming presentation."),
+            MoodEntry(LocalDate.now().withDayOfMonth(20), Mood("Tired", "😴"), ""),
+            MoodEntry(LocalDate.now().withDayOfMonth(22), Mood("Angry", "😠"), "Frustrated with traffic today."),
+            MoodEntry(LocalDate.now().minusMonths(1).withDayOfMonth(28), Mood("Happy", "😀"), "Weekend getaway was fun!"),
+            MoodEntry(LocalDate.now().withDayOfMonth(2), Mood("Sad", "😞"), "Missing my family.")
         )
     }
     var selectedMoodEntry by remember { mutableStateOf<MoodEntry?>(moodEntries.find { it.date == LocalDate.now() }) }
@@ -74,7 +81,7 @@ fun MonthHeader(currentMonth: YearMonth, onPreviousMonth: () -> Unit, onNextMont
 @Composable
 fun CalendarView(yearMonth: YearMonth, moodEntries: List<MoodEntry>, onDateSelected: (Int) -> Unit) {
     val daysInMonth = yearMonth.lengthOfMonth()
-    val firstDayOfMonth = yearMonth.atDay(1).dayOfWeek.value % 7
+    val firstDayOfMonth = yearMonth.atDay(1).dayOfWeek.value % 7 // Ensure Monday is 0
 
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
@@ -89,7 +96,7 @@ fun CalendarView(yearMonth: YearMonth, moodEntries: List<MoodEntry>, onDateSelec
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             for (i in 0 until firstDayOfMonth) {
-                item { Box(modifier = Modifier.size(48.dp)) }
+                item { Box(modifier = Modifier.size(56.dp)) } 
             }
             items((1..daysInMonth).toList()) { day ->
                 val entry = moodEntries.find { it.date.dayOfMonth == day && it.date.month == yearMonth.month && it.date.year == yearMonth.year }
@@ -101,20 +108,30 @@ fun CalendarView(yearMonth: YearMonth, moodEntries: List<MoodEntry>, onDateSelec
 
 @Composable
 fun DayCell(day: Int, moodEntry: MoodEntry?, onDateSelected: (Int) -> Unit) {
-    val isToday = LocalDate.now().dayOfMonth == day && LocalDate.now().monthValue == YearMonth.now().monthValue
+    val isToday = LocalDate.now().dayOfMonth == day && LocalDate.now().monthValue == YearMonth.now().monthValue && LocalDate.now().year == YearMonth.now().year
     Box(
         modifier = Modifier
-            .size(48.dp)
+            .size(56.dp) 
             .aspectRatio(1f)
             .clip(CircleShape)
             .background(if (isToday) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f) else Color.Transparent)
             .clickable { onDateSelected(day) },
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center // Center date and emoji area vertically
+        ) {
             Text(text = day.toString(), fontSize = 14.sp)
-            moodEntry?.let {
-                Text(text = it.mood.emoji, fontSize = 12.sp)
+            Box(
+                modifier = Modifier
+                    .height(18.dp) // Fixed height for emoji area
+                    .fillMaxWidth(), // Allow emoji to center
+                contentAlignment = Alignment.Center // Center emoji in this box
+            ) {
+                if (moodEntry != null) {
+                    Text(text = moodEntry.mood.emoji, fontSize = 12.sp)
+                }
             }
         }
     }

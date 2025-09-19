@@ -1,8 +1,10 @@
 package com.example.eudayan.home
 
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.* // Whole package imported
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -11,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -19,17 +22,21 @@ import com.example.eudayan.mood.Mood
 
 @Composable
 fun HomeScreen(showSignupSuccess: Boolean) {
+    val context = LocalContext.current
     if (showSignupSuccess) {
-        // You can show a Snackbar or a dialog here
+        LaunchedEffect(showSignupSuccess) {
+            Toast.makeText(context, "Signup Successful!", Toast.LENGTH_LONG).show()
+        }
     }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        contentPadding = PaddingValues(bottom = 76.dp) 
     ) {
         item {
-            Text("Hi Om,", style = MaterialTheme.typography.headlineMedium)
+            Text("Hi User,", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(24.dp))
         }
 
@@ -46,7 +53,6 @@ fun HomeScreen(showSignupSuccess: Boolean) {
         item {
             Spacer(modifier = Modifier.height(32.dp))
             MindfulnessQuote()
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -69,7 +75,7 @@ fun MoodEntrySection() {
         Spacer(modifier = Modifier.height(16.dp))
 
         val moodRows = moods.chunked(3)
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) { // Changed 8.dp to 4.dp
             moodRows.forEach { rowMoods ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -79,14 +85,14 @@ fun MoodEntrySection() {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
-                                .padding(4.dp)
+                                .padding(2.dp)
                                 .clip(RoundedCornerShape(50))
-                                .clickable { selectedMood = mood }
+                                .clickable { selectedMood = if (selectedMood == mood) null else mood }
                                 .background(
                                     if (mood == selectedMood) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                                     else Color.Transparent
                                 )
-                                .padding(vertical = 12.dp, horizontal = 20.dp)
+                                .padding(vertical = 5.dp, horizontal = 5.dp)
                         ) {
                             Text(mood.emoji, fontSize = 24.sp)
                             Spacer(modifier = Modifier.height(4.dp))
@@ -97,20 +103,24 @@ fun MoodEntrySection() {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = journalEntry,
-            onValueChange = { journalEntry = it },
-            label = { Text("Journal Entry") },
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 3
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = { /* TODO: Save mood entry */ },
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Text("Submit Mood")
+        AnimatedVisibility(visible = selectedMood != null) {
+            Column {
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = journalEntry,
+                    onValueChange = { journalEntry = it },
+                    label = { Text("Tell us more about your mood...") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 3
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { },
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("Submit Mood")
+                }
+            }
         }
     }
 }
@@ -161,7 +171,7 @@ fun MindfulnessQuote() {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Text(
-            text = "\"The little things? The little moments? They aren't little.\"\n- Jon Kabat-Zinn",
+            text = "“Do not lose heart, even in darkness — the narcissus still blooms in snow.”\n– Rehman Rahi",
             modifier = Modifier.padding(16.dp),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge

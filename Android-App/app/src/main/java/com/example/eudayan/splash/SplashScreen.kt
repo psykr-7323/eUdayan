@@ -45,7 +45,7 @@ fun SplashScreen(
 
             override fun onPlayerError(error: PlaybackException) {
                 Log.e("SplashScreen", "Video playback error: ", error)
-                // Navigate away immediately on error
+                
                 navController.navigate("login_selection") {
                     popUpTo("splash") { inclusive = true }
                 }

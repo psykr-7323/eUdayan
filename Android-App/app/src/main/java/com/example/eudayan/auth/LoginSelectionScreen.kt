@@ -27,7 +27,7 @@ fun LoginSelectionScreen(navController: NavController, onSkip: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Welcome to eUdayan", style = MaterialTheme.typography.headlineMedium)
+        Text("Welcome to eUdyaan", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(32.dp))
 

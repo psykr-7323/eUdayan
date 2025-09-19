@@ -9,8 +9,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ThumbUp
-import androidx.compose.material.icons.outlined.Comment
+import androidx.compose.material.icons.automirrored.filled.Reply // Added for Detail Screen
+import androidx.compose.material.icons.automirrored.outlined.Comment
+import androidx.compose.material.icons.filled.ThumbUp // Changed from Outlined for filled icon
+import androidx.compose.material.icons.outlined.ThumbUp // Keep for community screen
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,17 +32,30 @@ import com.example.eudayan.main.BottomBarScreen
 fun CommunityScreen(navController: NavController, posts: List<Post>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp),
+        contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 76.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         itemsIndexed(posts) { index, post ->
-            PostItem(post = post, navController = navController, postIndex = index)
+            PostItem(
+                post = post,
+                navController = navController,
+                postIndex = index,
+                isLiked = post.isLiked 
+            )
         }
     }
 }
 
 @Composable
-fun PostItem(post: Post, navController: NavController, isDetailScreen: Boolean = false, postIndex: Int = -1) {
+fun PostItem(
+    post: Post,
+    navController: NavController,
+    isDetailScreen: Boolean = false,
+    postIndex: Int = -1,
+    onLikeClicked: () -> Unit = {},
+    onReplyClicked: () -> Unit = {},
+    isLiked: Boolean 
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,7 +68,7 @@ fun PostItem(post: Post, navController: NavController, isDetailScreen: Boolean =
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    painter = painterResource(id = post.authorImage),
                     contentDescription = "Author",
                     modifier = Modifier.size(40.dp).clip(CircleShape),
                     contentScale = ContentScale.Crop
@@ -88,10 +103,31 @@ fun PostItem(post: Post, navController: NavController, isDetailScreen: Boolean =
                     contentScale = ContentScale.Crop
                 )
             }
+            
+            Spacer(modifier = Modifier.height(8.dp)) 
 
-            if (!isDetailScreen) {
-                Spacer(modifier = Modifier.height(8.dp))
-
+            if (isDetailScreen) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start 
+                ) {
+                    IconButton(onClick = onLikeClicked) {
+                        Icon(
+                            Icons.Filled.ThumbUp, 
+                            contentDescription = "Like",
+                            tint = if (isLiked) MaterialTheme.colorScheme.primary else Color.Gray
+                        )
+                    }
+                    Text(text = post.likes.toString())
+                    Spacer(modifier = Modifier.width(16.dp))
+                    IconButton(onClick = onReplyClicked) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Reply,
+                            contentDescription = "Reply to Post"
+                        )
+                    }
+                }
+            } else {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(24.dp)
@@ -104,7 +140,7 @@ fun PostItem(post: Post, navController: NavController, isDetailScreen: Boolean =
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Outlined.Comment, contentDescription = "Comments")
+                        Icon(Icons.AutoMirrored.Outlined.Comment, contentDescription = "Comments")
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(post.comments.size.toString())
                     }
