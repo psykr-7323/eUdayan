@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.EUdayan" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Define the main application theme -->
+    <style name="Theme.EUdayan" parent="Theme.MaterialComponents.Light.NoActionBar"> <!-- MODIFIED THIS LINE -->
+        <!-- You can customize primary, secondary colors, etc., here if needed -->
+        <!-- For example: -->
+        <!-- <item name="colorPrimary">@color/purple_500</item> -->
+        <!-- <item name="colorPrimaryVariant">@color/purple_700</item> -->
+        <!-- <item name="colorOnPrimary">@color/white</item> -->
+        <!-- <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item> -->
+    </style>
+
+    <!-- Base application theme (can be kept minimal if not widely used, or Theme.EUdayan can be the true base) -->
+    <style name="Theme.EUdayan.Base" parent="Theme.EUdayan">
+        <!-- This now inherits from the main Theme.EUdayan -->
+    </style>
+
+    <!-- Theme for IntroVideoActivity *after* splash screen -->
+    <style name="Theme.EUdayan.NoActionBar" parent="Theme.EUdayan.Base">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/transparent_drawable</item>
+        <item name="postSplashScreenTheme">@style/Theme.EUdayan.NoActionBar</item>
+    </style>
 </resources>

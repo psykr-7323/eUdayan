@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape // Added import for RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale // Added import for ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,9 +53,10 @@ fun DoctorDetailScreen(doctor: Doctor) {
         Image(
             painter = painterResource(id = doctor.image),
             contentDescription = doctor.name,
+            contentScale = ContentScale.Crop, // Added ContentScale.Crop
             modifier = Modifier
                 .size(120.dp)
-                .clip(CircleShape)
+                .clip(RoundedCornerShape(12.dp)) // Changed to RoundedCornerShape
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(doctor.name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)

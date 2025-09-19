@@ -35,8 +35,8 @@ fun AddPostScreen(
             placeholder = { Text("Announce something to your community") },
             modifier = Modifier.fillMaxWidth().weight(1f),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Black,
                 disabledBorderColor = Color.Transparent,
                 errorBorderColor = Color.Transparent
             )
