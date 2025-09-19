@@ -3,12 +3,12 @@ package com.example.eudayan.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Primary Accent Colors
-val WarmSalmon = Color(0xFFE07A5F) // Main accent (darkened)
-val SoftCoral = Color(0xFFfad2c8)  // Secondary accent
+val WarmSalmon = Color(0xFFE56A4F) // Main accent (richer and deeper)
+val SoftCoral = Color(0xFFFDDBCB)  // Secondary accent (warmer peachy-coral)
 
 // Background Colors
-val BgSoftPeach = Color(0xFFFFFBF7) // Corrected: Primary background (made even lighter, was 0xFFFFF7F2)
-val BgLightCream = Color(0xFFfff1e1) // Secondary background / container
+val BgSoftPeach = Color(0xFFFFF8F0) // Primary background (warmer peach)
+val BgLightCream = Color(0xFFFFF5E8) // Secondary background / container (warmer cream)
 
 // Surface Colors (for cards, sheets, etc.)
 val SurfaceAlmostWhite = Color(0xFFfefefe)
@@ -21,8 +21,8 @@ val SurfaceVeryLightGrayF9 = Color(0xFFf9f9f9)
 val SurfaceVeryPaleGrayF8 = Color(0xFFf8f8f8)
 
 // Outline & Border Colors
-val OutlineTaupeGray = Color(0xFFbbafa3)
-val OutlineWarmBeigeGray = Color(0xFFbeb2a6)
+val OutlineTaupeGray = Color(0xFFC0B6A9) // Slightly warmer taupe
+val OutlineWarmBeigeGray = Color(0xFFC4B8AD) // Slightly warmer beige-gray
 
 // Text & Icon Colors (for contrast on the above)
 val AppOnPrimaryText = Color(0xFF4C2B1B) // Dark brown for text/icons on WarmSalmon

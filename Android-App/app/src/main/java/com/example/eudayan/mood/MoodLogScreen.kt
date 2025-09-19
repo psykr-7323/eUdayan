@@ -11,7 +11,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+// Replaced wildcard import with specific imports
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,36 +27,51 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun MoodLogScreen() {
+fun MoodLogScreen(moodViewModel: MoodViewModel = viewModel()) {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
-    val moodEntries = remember {
-        
-        listOf(
-            MoodEntry(LocalDate.now().withDayOfMonth(12), Mood("Happy", "😀"), "Had a great day at college!"),
-            MoodEntry(LocalDate.now().withDayOfMonth(13), Mood("Happy", "😀"), ""),
-            MoodEntry(LocalDate.now().withDayOfMonth(15), Mood("Sad", "😞"), "Feeling a bit down today."),
-            MoodEntry(LocalDate.now().withDayOfMonth(17), Mood("Happy", "😀"), "Passed my exam!"),
-            // Added new entries
-            MoodEntry(LocalDate.now().withDayOfMonth(5), Mood("Calm", "😌"), "Peaceful morning meditation."),
-            MoodEntry(LocalDate.now().withDayOfMonth(8), Mood("Anxious", "😟"), "Worried about upcoming presentation."),
-            MoodEntry(LocalDate.now().withDayOfMonth(20), Mood("Tired", "😴"), ""),
-            MoodEntry(LocalDate.now().withDayOfMonth(22), Mood("Angry", "😠"), "Frustrated with traffic today."),
-            MoodEntry(LocalDate.now().minusMonths(1).withDayOfMonth(28), Mood("Happy", "😀"), "Weekend getaway was fun!"),
-            MoodEntry(LocalDate.now().withDayOfMonth(2), Mood("Sad", "😞"), "Missing my family.")
+    val moodEntries by moodViewModel.moodEntries.collectAsState()
+
+    var selectedMoodEntry by remember(moodEntries, currentMonth) { 
+        mutableStateOf(
+            moodEntries.find { 
+                it.date.month == currentMonth.month && 
+                it.date.year == currentMonth.year && 
+                it.date.dayOfMonth == LocalDate.now().dayOfMonth 
+            } ?: moodEntries.filter { 
+                it.date.month == currentMonth.month && it.date.year == currentMonth.year
+            }.firstOrNull()
         )
     }
-    var selectedMoodEntry by remember { mutableStateOf<MoodEntry?>(moodEntries.find { it.date == LocalDate.now() }) }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        MonthHeader(currentMonth = currentMonth, onPreviousMonth = { currentMonth = currentMonth.minusMonths(1) }, onNextMonth = { currentMonth = currentMonth.plusMonths(1) })
+        MonthHeader(
+            currentMonth = currentMonth,
+            onPreviousMonth = { 
+                currentMonth = currentMonth.minusMonths(1)
+                selectedMoodEntry = moodEntries.filter { 
+                    it.date.month == currentMonth.month && it.date.year == currentMonth.year
+                }.firstOrNull()
+            },
+            onNextMonth = { 
+                currentMonth = currentMonth.plusMonths(1) 
+                selectedMoodEntry = moodEntries.filter { 
+                    it.date.month == currentMonth.month && it.date.year == currentMonth.year
+                }.firstOrNull()
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
         CalendarView(yearMonth = currentMonth, moodEntries = moodEntries) { day ->
-            selectedMoodEntry = moodEntries.find { it.date.dayOfMonth == day && it.date.month == currentMonth.month && it.date.year == currentMonth.year }
+            selectedMoodEntry = moodEntries.find { 
+                it.date.dayOfMonth == day && 
+                it.date.month == currentMonth.month && 
+                it.date.year == currentMonth.year 
+            }
         }
         Spacer(modifier = Modifier.height(24.dp))
         selectedMoodEntry?.let {
@@ -81,7 +103,7 @@ fun MonthHeader(currentMonth: YearMonth, onPreviousMonth: () -> Unit, onNextMont
 @Composable
 fun CalendarView(yearMonth: YearMonth, moodEntries: List<MoodEntry>, onDateSelected: (Int) -> Unit) {
     val daysInMonth = yearMonth.lengthOfMonth()
-    val firstDayOfMonth = yearMonth.atDay(1).dayOfWeek.value % 7 // Ensure Monday is 0
+    val firstDayOfMonth = yearMonth.atDay(1).dayOfWeek.value % 7 
 
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
@@ -100,15 +122,17 @@ fun CalendarView(yearMonth: YearMonth, moodEntries: List<MoodEntry>, onDateSelec
             }
             items((1..daysInMonth).toList()) { day ->
                 val entry = moodEntries.find { it.date.dayOfMonth == day && it.date.month == yearMonth.month && it.date.year == yearMonth.year }
-                DayCell(day = day, moodEntry = entry, onDateSelected = onDateSelected)
+                DayCell(day = day, moodEntry = entry, onDateSelected = onDateSelected, currentCalendarYearMonth = yearMonth) 
             }
         }
     }
 }
 
 @Composable
-fun DayCell(day: Int, moodEntry: MoodEntry?, onDateSelected: (Int) -> Unit) {
-    val isToday = LocalDate.now().dayOfMonth == day && LocalDate.now().monthValue == YearMonth.now().monthValue && LocalDate.now().year == YearMonth.now().year
+fun DayCell(day: Int, moodEntry: MoodEntry?, onDateSelected: (Int) -> Unit, currentCalendarYearMonth: YearMonth) {
+    val cellDate = currentCalendarYearMonth.atDay(day)
+    val isToday = cellDate == LocalDate.now()
+
     Box(
         modifier = Modifier
             .size(56.dp) 
@@ -120,17 +144,18 @@ fun DayCell(day: Int, moodEntry: MoodEntry?, onDateSelected: (Int) -> Unit) {
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center // Center date and emoji area vertically
+            verticalArrangement = Arrangement.Center
         ) {
             Text(text = day.toString(), fontSize = 14.sp)
             Box(
                 modifier = Modifier
-                    .height(18.dp) // Fixed height for emoji area
-                    .fillMaxWidth(), // Allow emoji to center
-                contentAlignment = Alignment.Center // Center emoji in this box
+                    .height(18.dp)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
                 if (moodEntry != null) {
-                    Text(text = moodEntry.mood.emoji, fontSize = 12.sp)
+                    val emojiValue: String = moodEntry.mood.emoji 
+                    Text(text = emojiValue)
                 }
             }
         }
